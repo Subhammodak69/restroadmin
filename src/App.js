@@ -45,7 +45,6 @@ export default function App(){
     onBlurCapture={event=>{if(!event.currentTarget.contains(event.relatedTarget))setSidebarHovered(false)}}
    >
     <div className="sidebar-brand"><span className="admin-mark">R<span>✳</span></span><span>RESTRO<small>BACK OF HOUSE</small></span></div>
-    <div className="restaurant-switch"><span className="restaurant-avatar">{(staff?.restaurantName||'E').slice(0,1)}</span><span>{staff?.restaurantName||'Restaurant'}<small>MANAGER WORKSPACE</small></span><b>⌄</b></div>
     <span className="nav-label">WORKSPACE</span>
     <nav aria-label="Workspace navigation">{navigation.map(([id,icon,label])=><button key={id} type="button" title={label} aria-label={label} className={active===id?'nav-link active':'nav-link'} onClick={()=>setActive(id)}><span className="nav-link-icon" aria-hidden="true">{icon}</span><span className="nav-link-label">{label}</span>{id==='orders'&&revision>0&&<i className="nav-ping"/>}</button>)}</nav>
     <div className="sidebar-bottom"><div className="staff-avatar">{staff?.name?.slice(0,1)||'M'}</div><span>{staff?.name||'Manager'}<small>Restaurant manager</small></span><button type="button" onClick={logout} title="Sign out" aria-label="Sign out">↪</button></div>
@@ -54,6 +53,7 @@ export default function App(){
     <header className="admin-topbar">
      <div>
       <button className="sidebar-toggle" type="button" aria-label={sidebarExpanded?'Collapse sidebar':'Expand sidebar'} aria-expanded={sidebarExpanded} title={sidebarExpanded?'Collapse sidebar':'Expand sidebar'} onClick={()=>setSidebarPinned(!sidebarExpanded)}><span className="menu-glyph" aria-hidden="true"><i/><i/><i/></span></button>
+      <span className="navbar-brand"><span className="navbar-mark" aria-hidden="true">R<span>✳</span></span><span>RESTRO<small>BACK OF HOUSE</small></span></span>
       <span className="live-badge"><i/> {connected?'CONNECTION LIVE':'RECONNECTING'}</span>
       <span className="breadcrumb">EMBER &amp; SPICE <b>/</b> {navigation.find(x=>x[0]===active)?.[2].toUpperCase()}</span>
      </div>

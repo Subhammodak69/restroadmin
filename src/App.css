@@ -25,11 +25,15 @@
 .admin-app.sidebar-collapsed .sidebar-bottom{flex-direction:column;gap:10px;padding-top:13px}
 .admin-app.sidebar-collapsed .sidebar-bottom>button{padding:4px}
 .admin-app.sidebar-expanded .sidebar-brand{justify-content:flex-start;padding:2px 8px 25px}
-.admin-app .sidebar-toggle{display:inline-grid;flex:none;width:34px;height:34px;min-height:34px;place-items:center;border:1px solid var(--line);border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
-.admin-app .sidebar-toggle:hover{border-color:var(--orange);color:var(--orange)}
+.admin-app .sidebar-toggle{display:inline-grid;flex:none;width:34px;height:34px;min-height:34px;place-items:center;border:0;border-radius:4px;background:transparent;color:var(--text);cursor:pointer}
+.admin-app .sidebar-toggle:hover{color:var(--orange)}
 .admin-app .menu-glyph{display:grid;gap:4px;width:15px}
 .admin-app .menu-glyph i{display:block;width:15px;height:1.5px;border-radius:2px;background:currentColor}
-.admin-app[data-theme=light] .sidebar-toggle{border-color:#d8d1c8;color:#39332c}
+.admin-app .navbar-mark{position:relative;display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--orange);border-radius:50%;color:var(--orange);font:italic 24px var(--serif)}
+.admin-app .navbar-mark span{position:absolute;right:-2px;top:-4px;font:11px var(--sans)}
+.admin-app .navbar-brand{display:flex;align-items:center;gap:9px;color:var(--text);font:700 12px var(--mono);letter-spacing:.12em}
+.admin-app .navbar-brand>span:last-child small{display:block;margin-top:3px;color:#89847b;font:7px var(--mono);letter-spacing:.09em}
+.admin-app[data-theme=light] .sidebar-toggle{color:#39332c}
 @media(max-width:760px){
  .admin-app .sidebar,.admin-app.sidebar-expanded .sidebar,.admin-app.sidebar-collapsed .sidebar{width:100%;height:65px;padding:5px 6px}
  .admin-app .sidebar{top:auto;bottom:0;left:0;right:0}
@@ -78,7 +82,39 @@
 .admin-app .date-trigger,.admin-app .custom-select-trigger{height:40px;min-height:40px}
 .admin-app .profile-chip,.admin-app .modal-close{width:36px;height:36px;min-height:36px}
 .admin-app .theme-toggle{height:32px;min-height:32px}
+
+/* Keep long workspace labels on one line when the sidebar is expanded. */
+@media(min-width:761px){
+ .admin-app.sidebar-expanded .sidebar{width:280px;padding:24px 16px}
+ .admin-app.sidebar-expanded .admin-main{margin-left:280px}
+ .admin-app.sidebar-expanded .nav-link-label{
+  width:auto;
+  min-width:0;
+  flex:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  text-align:left
+ }
+}
 /* Hide scrollbars while preserving scroll and touch gestures. */
+@media(min-width:761px){
+ .admin-app .sidebar{padding-top:12px;padding-bottom:12px}
+ .admin-app.sidebar-expanded .sidebar-brand,
+ .admin-app.sidebar-collapsed .sidebar-brand{padding:0 8px 10px}
+ .admin-app.sidebar-collapsed .sidebar-brand{padding:0 0 10px}
+ .admin-app .sidebar-brand .admin-mark{width:34px;height:34px;font-size:22px}
+ .admin-app.sidebar-expanded .restaurant-switch{min-height:44px;padding:7px 10px}
+ .admin-app.sidebar-collapsed .restaurant-switch{width:44px;min-height:44px;padding:5px}
+ .admin-app.sidebar-collapsed .restaurant-switch .restaurant-avatar{width:30px;height:30px}
+ .admin-app .nav-label{margin:12px 9px 6px}
+ .admin-app .sidebar nav{gap:2px}
+ .admin-app .nav-link,
+ .admin-app.sidebar-collapsed .nav-link{height:36px;min-height:36px;padding:7px 10px}
+ .admin-app.sidebar-collapsed .nav-link{width:44px;padding:7px}
+ .admin-app .sidebar-bottom{padding:10px 3px 0}
+}
+
 *{scrollbar-width:none;-ms-overflow-style:none}
 *::-webkit-scrollbar{display:none;width:0;height:0}
 /* Modal shell stays fixed; only its content region scrolls. */
