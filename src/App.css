@@ -36,3 +36,11 @@
 
 .calendar-popover{max-height:calc(100vh - 16px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#625c53 transparent}.admin-app[data-theme=light] .calendar-popover{scrollbar-color:#c9bfb3 transparent}
 
+/* Compact, consistent action heights across the admin workspace. */
+.admin-app .primary-button{height:40px;min-height:40px;padding:0 13px}
+.admin-app .quiet-button{height:36px;min-height:36px;padding:0 11px}
+.admin-app .inline-action,.admin-app .option-add,.admin-app .dialog-secondary{min-height:34px;padding-top:6px;padding-bottom:6px}
+.admin-app .nav-link{height:40px;min-height:40px;padding-top:9px;padding-bottom:9px}
+.admin-app .date-trigger,.admin-app .custom-select-trigger{height:40px;min-height:40px}
+.admin-app .profile-chip,.admin-app .modal-close{width:36px;height:36px;min-height:36px}
+.admin-app .theme-toggle{height:32px;min-height:32px}
