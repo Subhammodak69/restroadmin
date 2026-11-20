@@ -1,10 +1,10 @@
-import {useEffect,useState} from 'react';
+import {useCallback,useEffect,useState} from 'react';
 import {api,send} from '../api';
 const money=n=>`₹${Number(n||0).toLocaleString('en-IN')}`;
 export default function CatalogScreen({token,revision}){
  const [items,setItems]=useState([]),[categories,setCategories]=useState([]),[stations,setStations]=useState([]),[form,setForm]=useState({name:'',description:'',price:'',categoryId:'',stationId:'',prepMinutes:15,isVegetarian:true}),[error,setError]=useState(''),[busy,setBusy]=useState(false);
- const load=()=>Promise.all([api('/admin/menu',{token}),api('/admin/categories',{token}),api('/admin/stations',{token})]).then(([a,b,c])=>{setItems(a);setCategories(b);setStations(c);setForm(f=>({...f,categoryId:f.categoryId||String(b[0]?.id||''),stationId:f.stationId||String(c[0]?.id||'')}))}).catch(e=>setError(e.message));
- useEffect(()=>{load();},[token,revision]);
+ const load=useCallback(()=>Promise.all([api('/admin/menu',{token}),api('/admin/categories',{token}),api('/admin/stations',{token})]).then(([a,b,c])=>{setItems(a);setCategories(b);setStations(c);setForm(f=>({...f,categoryId:f.categoryId||String(b[0]?.id||''),stationId:f.stationId||String(c[0]?.id||'')}))}).catch(e=>setError(e.message)),[token]);
+ useEffect(()=>{load();},[load,revision]);
  async function create(e){e.preventDefault();setBusy(true);setError('');try{await api('/admin/menu', {token,...send('POST',{...form,price:Number(form.price),categoryId:Number(form.categoryId),stationId:form.stationId?Number(form.stationId):null})});setForm(f=>({...f,name:'',description:'',price:''}));await load()}catch(e){setError(e.message)}finally{setBusy(false)}}
  async function toggle(item){try{await api(`/admin/menu/${item.id}`,{token,...send('PATCH',{isAvailable:!item.isAvailable,stationId:item.stationId})});setItems(list=>list.map(x=>x.id===item.id?{...x,isAvailable:!item.isAvailable}:x))}catch(e){setError(e.message)}}
  async function saveOptions(item){const raw=window.prompt('Enter options as JSON array. Example: [{"type":"SIZE","label":"Full","priceDelta":120}]');if(!raw)return;try{await api(`/admin/menu/${item.id}/options`,{token,...send('PUT',{options:JSON.parse(raw)})});setError('Options saved.');}catch(e){setError(e.message)}}

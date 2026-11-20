@@ -19,7 +19,7 @@ export default function App(){
  const [staff,setStaff]=useState(()=>{try{return JSON.parse(localStorage.getItem('restro.admin.staff')||'null')}catch{return null}});
  const [active,setActive]=useState('overview');const [authCheck,setAuthCheck]=useState(Boolean(token));const [authError,setAuthError]=useState('');
  const revision=useAdminRealtime(token);
- useEffect(()=>{if(!token){setAuthCheck(false);return}api('/auth/me',{token}).then(account=>{if(account.role!=='MANAGER')throw new Error('Manager access is required for this panel.');setStaff(account);localStorage.setItem('restro.admin.staff',JSON.stringify(account))}).catch(e=>{setAuthError(e.message);setToken('');localStorage.removeItem('restro.admin.token');localStorage.removeItem('restro.admin.staff')}).finally(()=>setAuthCheck(false))},[]);
+ useEffect(()=>{if(!token){setAuthCheck(false);return}api('/auth/me',{token}).then(account=>{if(account.role!=='MANAGER')throw new Error('Manager access is required for this panel.');setStaff(account);localStorage.setItem('restro.admin.staff',JSON.stringify(account))}).catch(e=>{setAuthError(e.message);setToken('');localStorage.removeItem('restro.admin.token');localStorage.removeItem('restro.admin.staff')}).finally(()=>setAuthCheck(false))},[token]);
  function login(result){const newToken=result.token;setToken(newToken);setStaff(result.staff);localStorage.setItem('restro.admin.token',newToken);localStorage.setItem('restro.admin.staff',JSON.stringify(result.staff));setAuthError('')}
  function logout(){setToken('');setStaff(null);localStorage.removeItem('restro.admin.token');localStorage.removeItem('restro.admin.staff')}
  if(authCheck)return <div className="boot-screen"><span className="admin-mark">R✳</span><p>Connecting to the restaurant…</p></div>;

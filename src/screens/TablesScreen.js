@@ -1,8 +1,8 @@
-import {useEffect,useState} from 'react';
+import {useCallback,useEffect,useState} from 'react';
 import {api,send} from '../api';
 export default function TablesScreen({token,revision}){
  const [tables,setTables]=useState([]),[requests,setRequests]=useState([]),[number,setNumber]=useState(''),[seats,setSeats]=useState(4),[qr,setQr]=useState(null),[error,setError]=useState('');
- const load=()=>Promise.all([api('/admin/tables',{token}),api('/admin/requests',{token})]).then(([a,b])=>{setTables(a);setRequests(b)}).catch(e=>setError(e.message));useEffect(()=>{load()},[token,revision]);
+ const load=useCallback(()=>Promise.all([api('/admin/tables',{token}),api('/admin/requests',{token})]).then(([a,b])=>{setTables(a);setRequests(b)}).catch(e=>setError(e.message)),[token]);useEffect(()=>{load()},[load,revision]);
  async function create(e){e.preventDefault();try{await api('/admin/tables',{token,...send('POST',{number,seats})});setNumber('');load()}catch(e){setError(e.message)}}
  async function showQr(id){try{setQr(await api(`/admin/tables/${id}/qr`,{token}))}catch(e){setError(e.message)}}
  async function rotate(id){try{await api(`/admin/tables/${id}/rotate-qr`,{token,...send('POST',{})});load();setQr(null)}catch(e){setError(e.message)}}
