@@ -52,37 +52,62 @@ export default function DeliveryScreen({ token, revision }) {
       <div className="screen-heading"><div><span className="micro-label">HOME DELIVERY OPERATIONS</span><h1>On the <em>road.</em></h1><p>Assign a courier and advance each delivery as it moves.</p></div><span className="live-badge"><i/> LIVE</span></div>
       {error && <div className="notice error">{error}</div>}
       {!staff.length && <div className="notice">No active delivery staff. Add a delivery staff account in Settings before assigning orders.</div>}
-      <section className="delivery-grid">
-        {rows.length ? rows.map(order => {
-          const next = nextStatus[order.deliveryStatus];
-          const needsCourier = ['UNASSIGNED', 'FAILED'].includes(order.deliveryStatus);
-          const canProgress = next && (!needsCourier || Boolean(order.staffId)) && (next !== 'PICKED_UP' || order.status === 'READY');
-          return (
-            <article className="panel delivery-card" key={order.id}>
-              <div className="panel-title"><div><b>{order.orderNumber}</b><span className={`status-pill ${String(order.deliveryStatus).toLowerCase()}`}>{order.deliveryStatus}</span></div><span className={`status-pill ${String(order.status).toLowerCase()}`}>{order.status}</span></div>
-              <address>{order.address?.recipientName && <>{order.address.recipientName}<br/></>}{order.address?.line1}<br/>{order.address?.city}, {order.address?.postalCode}</address>
-              <small>Placed {new Date(order.placedAt).toLocaleString()}</small>
-              <label className="delivery-assign">ASSIGN COURIER
-                <CustomSelect
-                  value={String(order.staffId || '')}
-                  onChange={staffId => {
-                    if (!staffId && !order.staffId) return;
-                    update(order, staffId ? 'ASSIGNED' : 'UNASSIGNED', staffId);
-                  }}
-                  disabled={busyId === order.id || !staff.length || !['UNASSIGNED', 'ASSIGNED', 'FAILED'].includes(order.deliveryStatus)}
-                  placeholder={order.staffName || 'Choose active delivery staff'}
-                  options={[...(order.staffId ? [{ value: '', label: 'Unassign courier' }] : []), ...staff.map(member => ({ value: String(member.id), label: `${member.name} · ${member.phone}` }))]}
-                />
-              </label>
-              <div className="delivery-steps" aria-label="Delivery progress">
-                {deliveryStages.map((stage, index) => <span className={`step ${order.deliveryStatus === stage ? 'current' : index < deliveryStages.indexOf(order.deliveryStatus) ? 'complete' : ''}`} key={stage}>{stage.replaceAll('_', ' ')}</span>)}
-              </div>
-              {order.deliveryStatus === 'ASSIGNED' && order.status !== 'READY' && <small className="delivery-hint">The kitchen must mark this order ready before courier pickup.</small>}
-              {next && <button className="primary-button delivery-progress-button" type="button" disabled={!canProgress || busyId === order.id} onClick={() => progress(order)}>{busyId === order.id ? 'SAVING…' : `MARK ${next.replaceAll('_', ' ')}`}<span>→</span></button>}
-              {!next && <small className="delivery-hint">Delivery complete.</small>}
-            </article>
-          );
-        }) : <div className="panel empty-state">No home delivery orders yet.</div>}
+      <section className="panel delivery-table-panel">
+        <div className="panel-title"><div><span className="micro-label">DELIVERY QUEUE</span><h2>{rows.length} {rows.length === 1 ? 'order' : 'orders'}</h2></div><span className="live-badge"><i/> LIVE</span></div>
+        {rows.length ? (
+          <div className="data-table-wrap delivery-table-wrap">
+            <table className="data-table delivery-table" aria-label="Delivery orders">
+              <thead><tr><th>ORDER</th><th>GUEST &amp; ADDRESS</th><th>PLACED</th><th>KITCHEN</th><th>COURIER</th><th>DELIVERY PROGRESS</th><th>ACTION</th></tr></thead>
+              <tbody>
+                {rows.map(order => {
+                  const deliveryStatus = String(order.deliveryStatus || 'UNASSIGNED').toUpperCase();
+                  const next = nextStatus[deliveryStatus];
+                  const stageIndex = deliveryStages.indexOf(deliveryStatus);
+                  const progressIndex = Math.max(stageIndex, 0);
+                  const needsCourier = ['UNASSIGNED', 'FAILED'].includes(deliveryStatus);
+                  const canProgress = next && (!needsCourier || Boolean(order.staffId)) && (next !== 'PICKED_UP' || order.status === 'READY');
+                  const address = [order.address?.line1, order.address?.city, order.address?.postalCode].filter(Boolean).join(', ');
+                  return (
+                    <tr key={order.id}>
+                      <td><b>{order.orderNumber}</b><small>₹{Number(order.total || 0).toLocaleString('en-IN')}</small></td>
+                      <td><strong className="delivery-guest-name">{order.address?.recipientName || 'Guest'}</strong><small className="delivery-address">{address || 'Address unavailable'}</small></td>
+                      <td><time dateTime={order.placedAt}>{new Date(order.placedAt).toLocaleString()}</time></td>
+                      <td><span className={`status-pill ${String(order.status).toLowerCase()}`}>{order.status}</span></td>
+                      <td>
+                        <div className="delivery-table-assignment">
+                          <span>{order.staffName || 'Not assigned'}</span>
+                          <CustomSelect
+                            value={String(order.staffId || '')}
+                            onChange={staffId => {
+                              if (!staffId && !order.staffId) return;
+                              update(order, staffId ? 'ASSIGNED' : 'UNASSIGNED', staffId);
+                            }}
+                            disabled={busyId === order.id || !staff.length || !['UNASSIGNED', 'ASSIGNED', 'FAILED'].includes(deliveryStatus)}
+                            placeholder="Choose courier"
+                            options={[...(order.staffId ? [{ value: '', label: 'Unassign courier' }] : []), ...staff.map(member => ({ value: String(member.id), label: `${member.name} · ${member.phone}` }))]}
+                          />
+                        </div>
+                      </td>
+                      <td>
+                        <div className="delivery-table-progress">
+                          <span className={`status-pill ${deliveryStatus.toLowerCase()}`}>{deliveryStatus.replaceAll('_', ' ')}</span>
+                          <div className="delivery-table-track" role="progressbar" aria-label={`${order.orderNumber} delivery progress`} aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round((progressIndex / (deliveryStages.length - 1)) * 100)}>
+                            <i style={{ width: `${(progressIndex / (deliveryStages.length - 1)) * 100}%` }}/>
+                          </div>
+                          <small>{stageIndex < 0 ? 'Delivery issue' : `${stageIndex + 1} of ${deliveryStages.length} steps`}</small>
+                        </div>
+                      </td>
+                      <td className="delivery-action-cell">
+                        {deliveryStatus === 'ASSIGNED' && order.status !== 'READY' && <small className="delivery-hint">Kitchen must mark ready before pickup.</small>}
+                        {next ? <button className="primary-button delivery-progress-button" type="button" disabled={!canProgress || busyId === order.id} onClick={() => progress(order)}>{busyId === order.id ? 'SAVING…' : `MARK ${next.replaceAll('_', ' ')}`}<span>→</span></button> : <small className="delivery-hint">Delivery complete.</small>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        ) : <div className="empty-state">No home delivery orders yet.</div>}
       </section>
     </div>
   );

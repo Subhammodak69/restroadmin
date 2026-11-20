@@ -41,10 +41,15 @@ export default function OrdersScreen({ token, revision, onManageDelivery }) {
   }
 
   function actions(order) {
-    if (order.orderType === 'DELIVERY') {
-      return <button className="inline-action" type="button" onClick={onManageDelivery}>{order.status === 'DELIVERED' ? 'VIEW DELIVERY →' : 'MANAGE DELIVERY →'}</button>;
-    }
     const next = nextStatus[order.status];
+    if (order.orderType === 'DELIVERY') {
+      return (
+        <div className="order-row-actions">
+          {next && next !== 'SERVED' && <button className="inline-action" type="button" disabled={busyId === order.id} onClick={() => advance(order)}>{busyId === order.id ? 'SAVING…' : `MARK ${next.replaceAll('_', ' ')} →`}</button>}
+          <button className="inline-action" type="button" onClick={onManageDelivery}>{order.status === 'DELIVERED' ? 'VIEW DELIVERY →' : 'MANAGE DELIVERY →'}</button>
+        </div>
+      );
+    }
     return next
       ? <button className="inline-action" type="button" disabled={busyId === order.id} onClick={() => advance(order)}>{busyId === order.id ? 'SAVING…' : `MARK ${next.replaceAll('_', ' ')} →`}</button>
       : <span className="muted-caption">No action</span>;
