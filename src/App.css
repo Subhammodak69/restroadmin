@@ -135,3 +135,29 @@
 }
 
 .admin-app button{height:auto!important;min-height:0!important;max-height:none!important;padding:10px 20px!important}
+.order-action-cell{min-width:120px}.data-table td .inline-action{display:block;white-space:nowrap}
+.delivery-assign{display:grid;gap:8px;margin-top:16px;color:#958f86;font:7px var(--mono);letter-spacing:.09em}
+.delivery-assign .custom-select-trigger{width:100%;min-height:38px;border:1px solid #ffffff24;border-radius:4px;background:#121211;padding:9px 11px;color:#eee8df;font:10px var(--sans);letter-spacing:0}
+.delivery-steps .step{display:inline-flex}
+.delivery-steps .step.complete{border-color:#78985a;color:#b3d18d}
+.delivery-hint{display:block;margin-top:10px;color:#bcb2a2;font-size:9px;line-height:1.5}
+.delivery-progress-button{margin-top:14px}
+.kitchen-app{min-height:100vh;background:#111110}
+.kitchen-workspace{max-width:1450px;margin:0 auto;padding:28px 32px}
+.kitchen-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;border-bottom:1px solid var(--line);padding-bottom:18px}
+.kitchen-topbar h1{margin:8px 0;color:#f2eee7;font:500 32px var(--serif)}
+.kitchen-topbar h1 em{color:var(--orange)}
+.kitchen-topbar .live-badge{margin-top:6px}
+.kitchen-ticket-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.kitchen-ticket{display:flex;min-height:205px;flex-direction:column}
+.kitchen-ticket-heading{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:12px}
+.kitchen-ticket-heading h2{margin:5px 0 0;font:500 21px var(--serif)}
+.kitchen-ticket-item{display:grid;gap:8px;margin:16px 0;font-size:16px}
+.kitchen-ticket-item span{color:#aaa49b;font-size:10px}
+.kitchen-ticket-note{margin:0 0 12px;color:#e3c9b0;font-size:11px;line-height:1.5}
+.kitchen-ticket footer{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;border-top:1px solid var(--line);padding-top:12px}
+.kitchen-ticket footer small{color:#8f8980;font:8px var(--mono)}
+.kitchen-ticket .primary-button{min-width:135px}
+.kitchen-ready{color:#b3d18d;font:8px var(--mono)}
+@media(max-width:1100px){.kitchen-ticket-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:650px){.kitchen-workspace{padding:18px 13px}.kitchen-ticket-grid{grid-template-columns:1fr}.kitchen-topbar h1{font-size:27px}}
